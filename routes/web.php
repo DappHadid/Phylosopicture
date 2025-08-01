@@ -1,31 +1,29 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\SocialiteController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Route untuk dashboard pengguna biasa.
-// Ini hanya bisa diakses jika pengguna sudah login dan emailnya terverifikasi.
+Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])
+    ->name('socialite.redirect');
+    
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])
+    ->name('socialite.callback');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
-// --- CONTOH ROUTE DENGAN SPATIE ROLE MIDDLEWARE ---
-// Grup ini hanya bisa diakses oleh pengguna yang sudah login DAN memiliki role 'admin'.
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Route untuk dashboard admin -> /admin/dashboard
     Route::get('/dashboard', function () {
-        // Asumsi Anda akan membuat halaman Admin/Dashboard.jsx
         return Inertia::render('Admin/Dashboard');
     })->name('dashboard');
-
-    // Tambahkan route-route khusus admin lainnya di sini...
 });
 
 Route::middleware('auth')->group(function () {
