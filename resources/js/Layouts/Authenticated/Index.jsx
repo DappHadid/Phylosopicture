@@ -1,6 +1,8 @@
 import React from "react";
 import Sidebar from "@/Layouts/Authenticated/Sidebar";
 import Topbar from "@/Layouts/Authenticated/Topbar";
+import Footer from "@/Layouts/Authenticated/Footer";
+
 export default function Authenticated({ children }) {
     return (
         <>
@@ -25,6 +27,9 @@ export default function Authenticated({ children }) {
                     Sorry, this page only supported on 1024px screen or above
                 </div>
             </div>
+
+            {/* Footer */}
+            {/* <Footer /> */}
         </>
     );
 }

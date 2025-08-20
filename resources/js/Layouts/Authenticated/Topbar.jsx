@@ -1,17 +1,25 @@
 import { useState, useRef } from "react";
-import { Link } from "@inertiajs/react";
+import { Link, usePage, router } from "@inertiajs/react";
+
 export default function Topbar() {
+    const { auth } = usePage().props; // Ambil data autentikasi dari Inertia props
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownTarget = useRef(null);
 
     const triggerDropdown = () => {
-        if (dropdownOpen) {
-            dropdownTarget.current.classList.remove("hidden");
-        } else {
-            dropdownTarget.current.classList.add("hidden");
-        }
         setDropdownOpen(!dropdownOpen);
+        if (dropdownOpen) {
+            dropdownTarget.current.classList.add("hidden");
+        } else {
+            dropdownTarget.current.classList.remove("hidden");
+        }
     };
+
+    const handleLogout = (e) => {
+        e.preventDefault();
+        router.post(route("logout"));
+    };
+
     return (
         <div className="flex justify-between items-center cursor-pointer">
             <input
@@ -21,7 +29,7 @@ export default function Topbar() {
             />
             <div className="flex items-center gap-4">
                 <span className="text-black text-sm font-medium">
-                    Welcome, Granola Sky
+                    Welcome, {auth.user?.name || "Guest"}
                 </span>
                 <div className="collapsible-dropdown flex flex-col gap-2 relative">
                     <div
@@ -29,9 +37,9 @@ export default function Topbar() {
                         onClick={triggerDropdown}
                     >
                         <img
-                            src="/images/avatar.png"
+                            src={auth.user?.avatar || "/images/avatar.png"}
                             className="rounded-full object-cover w-full"
-                            alt=""
+                            alt={auth.user?.name || "User Avatar"}
                         />
                     </div>
                     <div
@@ -40,29 +48,33 @@ export default function Topbar() {
                         }`}
                         ref={dropdownTarget}
                     >
-                        <a
-                            href="#!"
+                        <Link
+                            href={route("user.dashboard")}
                             className="transition-all hover:bg-sky-100 p-4"
                         >
                             Dashboard
-                        </a>
-                        <a
-                            href="#!"
+                        </Link>
+                        <Link
+                            href={route("profile.edit")}
                             className="transition-all hover:bg-sky-100 p-4"
                         >
                             Settings
-                        </a>
-                        <a
-                            href="sign_in.html"
-                            className="transition-all hover:bg-sky-100 p-4"
+                        </Link>
+                        <button
+                            onClick={handleLogout}
+                            className="transition-all hover:bg-sky-100 p-4 text-left w-full"
                         >
                             Sign Out
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
             <style jsx="true">
-                {".top-search {background-image: url('/icons/ic_search.svg');}"}
+                {`
+                    .top-search {
+                        background-image: url("/icons/ic_search.svg");
+                    }
+                `}
             </style>
         </div>
     );
