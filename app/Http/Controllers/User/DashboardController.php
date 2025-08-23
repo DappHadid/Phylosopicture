@@ -16,13 +16,23 @@ class DashboardController extends Controller
             ->where('is_featured', true)
             ->orderBy('rating', 'desc')
             ->limit(4)
-            ->get();
+            ->get()
+            ->map(function ($movie) {
+                // Ensure rating is a number
+                $movie->rating = (float) $movie->rating;
+                return $movie;
+            });
             
         // Get browse movies for grid display
         $browseMovies = Movie::with('genre')
             ->orderBy('release_year', 'desc')
             ->limit(10)
-            ->get();
+            ->get()
+            ->map(function ($movie) {
+                // Ensure rating is a number
+                $movie->rating = (float) $movie->rating;
+                return $movie;
+            });
             
         // Get featured movie for main display (first one)
         $featuredMovie = $featuredMovies->first() ?? Movie::with('genre')->first();
@@ -31,6 +41,20 @@ class DashboardController extends Controller
             'featuredMovie' => $featuredMovie,
             'featuredMovies' => $featuredMovies,
             'browseMovies' => $browseMovies,
+        ]);
+    }
+
+    public function favorites()
+    {
+        // Get user's favorite movies with genre
+        $favoriteMovies = request()->user()->favorites()->with('genre')->get()
+            ->map(function ($movie) {
+                $movie->rating = (float) $movie->rating;
+                return $movie;
+            });
+            
+        return Inertia::render('User/Dashboard/Favorite', [
+            'favoriteMovies' => $favoriteMovies,
         ]);
     }
 }

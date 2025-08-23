@@ -3,95 +3,117 @@ import PropTypes from "prop-types";
 import { Link } from "@inertiajs/react";
 
 export default function MovieDetail({ movie }) {
+    const genreName = movie.genre ? movie.genre.name : "Unknown Genre";
+    const releaseYear = movie.release_year || "2018";
+    const duration = movie.duration || "1h 30m";
+    const price = movie.price
+        ? `Rp ${movie.price.toLocaleString()},00`
+        : "Rp 20.000,00";
+    const rating = movie.rating ? `${movie.rating.toFixed(1)}/10` : "8.5/10";
+
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-6">
-            <div className="max-w-6xl mx-auto">
+        <div className="min-h-screen bg-white text-gray-900 p-6 font-sans">
+            <div className="max-w-7xl mx-auto">
                 {/* Cover Banner */}
-                <div className="relative w-full h-64 mb-8 overflow-hidden rounded-xl shadow-2xl">
+                <div className="relative w-full h-80 mb-8 overflow-hidden rounded-2xl shadow-lg bg-gradient-to-br from-gray-100 to-gray-200">
                     <img
-                        src={movie.cover || movie.thumbnail} // Gunakan cover jika ada, jika tidak pakai thumbnail
-                        alt={`${movie.name} Cover`}
-                        className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
+                        src={
+                            movie.thumbnail_url ||
+                            "/images/default-thumbnail.jpg"
+                        }
+                        alt={`${movie.title} Cover`}
+                        className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-                    <div className="absolute bottom-4 left-6">
-                        <h2 className="text-3xl font-bold text-white drop-shadow-md">
-                            {movie.name}
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 via-transparent to-transparent"></div>
+                    <div className="absolute bottom-6 left-6">
+                        <h2 className="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">
+                            {movie.title}
                         </h2>
-                        <div className="flex items-center gap-4 mt-2">
-                            <span className="text-gray-400 text-sm">
-                                {movie.releaseYear || "2018"} •{" "}
-                                {movie.duration || "1h 30m"} Menit
+                        <div className="flex items-center gap-4 mt-3">
+                            <span className="text-gray-200 text-sm font-medium">
+                                {releaseYear} • {duration}
                             </span>
-                            <span className="text-yellow-400 text-sm">
-                                ★ 8.5/10
-                            </span>{" "}
-                            {/* Rating contoh, bisa diubah */}
+                            <span className="text-yellow-400 text-sm font-semibold">
+                                ★ {rating}
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                {/* Poster dan Detail */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {/* Poster and Details */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                     <div className="md:col-span-1">
-                        <div className="relative overflow-hidden rounded-xl shadow-2xl">
+                        <div className="relative overflow-hidden rounded-2xl shadow-xl">
                             <img
-                                src={movie.thumbnail}
-                                alt={movie.name}
-                                className="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
+                                src={
+                                    movie.thumbnail_url ||
+                                    "/images/default-thumbnail.jpg"
+                                }
+                                alt={movie.title}
+                                className="w-full h-auto object-cover transition-transform duration-500 hover:scale-110"
                             />
-                            <div className="absolute top-4 left-4 bg-blue-500 text-xs px-2 py-1 rounded-full opacity-90">
-                                {movie.category}
+                            <div className="absolute top-4 left-4 bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                                {genreName}
                             </div>
                         </div>
                     </div>
-                    <div className="md:col-span-3 space-y-6">
+                    <div className="md:col-span-2 space-y-8">
                         <div>
-                            <p className="text-gray-300 leading-relaxed">
+                            <p className="text-gray-700 leading-relaxed text-lg">
                                 {movie.description ||
                                     "Tidak ada deskripsi tersedia untuk film ini."}
                             </p>
                         </div>
                         <div className="flex flex-wrap gap-4">
                             <Link
-                                href={`/buy/${movie.slug}`}
-                                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1"
+                                href={route("movie.buy", { slug: movie.slug })}
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
                             >
                                 Beli Tiket
                             </Link>
                             <Link
-                                href={`/watch/${movie.slug}`} // Rute fiktif untuk play
-                                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1"
+                                href={route("movie.buy", { slug: movie.slug })}
+                                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
                             >
                                 Putar Sekarang
                             </Link>
-                            <button className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                            <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
                                 Daftar
                             </button>
-                            <button className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                            <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
                                 Bagikan
                             </button>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-600 text-sm">
                             <p>
-                                <strong>Pemeran:</strong>{" "}
+                                <strong className="font-semibold text-gray-900">
+                                    Pemeran:
+                                </strong>{" "}
                                 {movie.cast ||
-                                    "Siti Arita, Jihan Kler, Ical D'Academy, Vira Kdi, Yuluar Arief"}
+                                    "Siti Arita, Jihan Kler, Ical D'Academy"}
                             </p>
                             <p>
-                                <strong>Harga:</strong> Rp
-                                {movie.price || "20.000"},00
+                                <strong className="font-semibold text-gray-900">
+                                    Harga:
+                                </strong>{" "}
+                                {price}
                             </p>
                             <p>
-                                <strong>Penulis:</strong>{" "}
-                                {movie.writer || "Aca Hasauddin Mt"}
+                                <strong className="font-semibold text-gray-900">
+                                    Penulis:
+                                </strong>{" "}
+                                {movie.scriptwriter || "Aca Hasauddin Mt"}
                             </p>
                             <p>
-                                <strong>Sutradara:</strong>{" "}
+                                <strong className="font-semibold text-gray-900">
+                                    Sutradara:
+                                </strong>{" "}
                                 {movie.director || "Aca Hasauddin Mt"}
                             </p>
-                            <p className="col-span-2">
-                                <strong>Perusahaan Produksi:</strong>{" "}
+                            <p className="sm:col-span-2">
+                                <strong className="font-semibold text-gray-900">
+                                    Perusahaan Produksi:
+                                </strong>{" "}
                                 {movie.production || "SKY Movie Entertainment"}
                             </p>
                         </div>
@@ -104,18 +126,24 @@ export default function MovieDetail({ movie }) {
 
 MovieDetail.propTypes = {
     movie: PropTypes.shape({
-        slug: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        category: PropTypes.string.isRequired,
-        thumbnail: PropTypes.string.isRequired,
-        cover: PropTypes.string, // Tambahkan prop untuk cover
-        duration: PropTypes.string,
-        price: PropTypes.string,
+        movie_id: PropTypes.number.isRequired,
+        genre_id: PropTypes.number,
+        title: PropTypes.string.isRequired,
         description: PropTypes.string,
-        cast: PropTypes.string,
-        releaseYear: PropTypes.string,
-        writer: PropTypes.string,
+        scriptwriter: PropTypes.string,
         director: PropTypes.string,
+        price: PropTypes.number,
+        duration: PropTypes.number,
+        rating: PropTypes.number,
+        release_year: PropTypes.number,
+        storage_url: PropTypes.string,
+        thumbnail_url: PropTypes.string,
+        is_featured: PropTypes.bool,
+        genre: PropTypes.shape({
+            name: PropTypes.string,
+        }),
+        slug: PropTypes.string,
+        cast: PropTypes.string,
         production: PropTypes.string,
     }).isRequired,
 };

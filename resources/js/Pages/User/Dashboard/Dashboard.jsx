@@ -5,7 +5,6 @@ import Flickity from "flickity";
 import "flickity/css/flickity.css";
 import FeaturedMovie from "@/Components/FeaturedMovie";
 import MovieCard from "@/Components/MovieCard";
-import MovieDetail from "@/Components/MovieDetail";
 import ReactFlickity from "react-flickity-component";
 
 export default function Dashboard({
@@ -25,6 +24,7 @@ export default function Dashboard({
                 pageDots: false,
                 prevNextButtons: false,
                 draggable: true,
+                freeScroll: true,
             });
 
             return () => {
@@ -42,12 +42,13 @@ export default function Dashboard({
         pageDots: false,
         prevNextButtons: false,
         draggable: true,
+        freeScroll: true,
     };
 
     return (
         <Authenticated>
             <Head title="Dashboard - Movies" />
-            <div>
+            <div className="px-4">
                 {/* Featured Movies Section */}
                 <div className="font-semibold text-[22px] text-black mb-4">
                     Featured Movies
@@ -57,7 +58,7 @@ export default function Dashboard({
                         featuredMovies.map((movie) => (
                             <FeaturedMovie
                                 key={movie.movie_id}
-                                slug={`/movie/${movie.movie_id}`}
+                                slug={movie.slug}
                                 name={movie.title}
                                 category={movie.genre?.name || "Unknown"}
                                 thumbnail={
@@ -82,7 +83,7 @@ export default function Dashboard({
                             browseMovies.map((movie) => (
                                 <MovieCard
                                     key={movie.movie_id}
-                                    slug={`/movie/${movie.movie_id}`}
+                                    slug={movie.slug}
                                     name={movie.title}
                                     category={movie.genre?.name || "Unknown"}
                                     thumbnail={

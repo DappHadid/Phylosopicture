@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Movie;
 use App\Models\Genre;
+use Illuminate\Support\Str;
 
 class MovieSeederFixed extends Seeder
 {
@@ -31,6 +32,7 @@ class MovieSeederFixed extends Seeder
         $featuredMovies = [
             [
                 'title' => 'The Quantum Paradox',
+                'slug' => Str::slug('The Quantum Paradox'),
                 'description' => 'A mind-bending sci-fi thriller that explores the boundaries of reality and consciousness.',
                 'genre_id' => Genre::where('slug', 'sci-fi')->first()->genre_id,
                 'price' => 9.99,
@@ -45,6 +47,7 @@ class MovieSeederFixed extends Seeder
             ],
             [
                 'title' => 'Love in Paris',
+                'slug' => Str::slug('Love in Paris'),
                 'description' => 'A heartwarming romantic journey through the streets of Paris, exploring love and destiny.',
                 'genre_id' => Genre::where('slug', 'romance')->first()->genre_id,
                 'price' => 7.99,
@@ -59,6 +62,7 @@ class MovieSeederFixed extends Seeder
             ],
             [
                 'title' => 'The Dark Knight Returns',
+                'slug' => Str::slug('The Dark Knight Returns'),
                 'description' => 'An action-packed superhero film featuring the legendary Batman in his most challenging case yet.',
                 'genre_id' => Genre::where('slug', 'action')->first()->genre_id,
                 'price' => 12.99,
@@ -77,6 +81,7 @@ class MovieSeederFixed extends Seeder
         $browseMovies = [
             [
                 'title' => 'Meong Golden',
+                'slug' => Str::slug('Meong Golden'),
                 'description' => 'A horror love story with unexpected twists and supernatural elements.',
                 'genre_id' => Genre::where('slug', 'horror')->first()->genre_id,
                 'price' => 8.99,
@@ -91,6 +96,7 @@ class MovieSeederFixed extends Seeder
             ],
             [
                 'title' => 'Midnight Chronicles',
+                'slug' => Str::slug('Midnight Chronicles'),
                 'description' => 'A gripping drama that unfolds in the dark streets of a metropolitan city.',
                 'genre_id' => Genre::where('slug', 'drama')->first()->genre_id,
                 'price' => 6.99,
@@ -105,6 +111,7 @@ class MovieSeederFixed extends Seeder
             ],
             [
                 'title' => 'Comedy Central',
+                'slug' => Str::slug('Comedy Central'),
                 'description' => 'A hilarious comedy that will keep you laughing from start to finish.',
                 'genre_id' => Genre::where('slug', 'comedy')->first()->genre_id,
                 'price' => 5.99,
@@ -119,6 +126,7 @@ class MovieSeederFixed extends Seeder
             ],
             [
                 'title' => 'Action Heroes',
+                'slug' => Str::slug('Action Heroes'),
                 'description' => 'An explosive action film with non-stop thrills and spectacular stunts.',
                 'genre_id' => Genre::where('slug', 'action')->first()->genre_id,
                 'price' => 11.99,
@@ -133,6 +141,7 @@ class MovieSeederFixed extends Seeder
             ],
             [
                 'title' => 'Sci-Fi Odyssey',
+                'slug' => Str::slug('Sci-Fi Odyssey'),
                 'description' => 'A mind-bending science fiction adventure across galaxies and dimensions.',
                 'genre_id' => Genre::where('slug', 'sci-fi')->first()->genre_id,
                 'price' => 9.99,
@@ -152,7 +161,7 @@ class MovieSeederFixed extends Seeder
         
         foreach ($allMovies as $movie) {
             Movie::firstOrCreate(
-                ['title' => $movie['title']],
+                ['slug' => $movie['slug']],
                 $movie
             );
         }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('movie_id');
             $table->foreignId('genre_id')->constrained('genres', 'genre_id')->onDelete('cascade');
             $table->string('title');
+            $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->string('scriptwriter')->nullable();
             $table->string('director')->nullable();
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->integer('release_year');
             $table->string('storage_url');
             $table->string('thumbnail_url')->nullable();
+            $table->boolean('is_featured');
             $table->timestamps();
         });
     }

@@ -43,14 +43,12 @@ export default function RegisterPage() {
                 </div>
                 <div className="relative z-10 w-full max-w-md lg:ml-[50%] lg:px-16">
                     <div>
-                        <img
-                            src="/images/moonton-white.svg"
-                            alt="Logo Moonton"
-                            className="mb-12"
-                            onError={(e) => {
-                                e.target.style.display = "none";
-                            }}
-                        />
+                        <a
+                            href="/"
+                            className="block text-3xl md:text-4xl font-extrabold text-white hover:text-gray-200 transition-colors duration-300 animate-fade-in"
+                        >
+                            <h3>Phylosopicture</h3>
+                        </a>
                         <div className="my-[50px]">
                             <div className="font-semibold text-3xl mb-3">
                                 Sign Up
