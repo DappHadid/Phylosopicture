@@ -1,3 +1,33 @@
+@import "./sidebar.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* .flex::before,
+.flex::after {
+    display: none !important;
+} */
+
+.carousel {
+    width: 100%;
+    overflow: hidden;
+}
+
+.flickity-slider>div {
+    margin-right: 30px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}

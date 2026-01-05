@@ -8,14 +8,14 @@ use Inertia\Middleware;
 class HandleInertiaRequests extends Middleware
 {
     /**
-     * The root template that is loaded on the first page visit.
+     * Root template yang digunakan untuk memuat aplikasi Inertia.
      *
      * @var string
      */
     protected $rootView = 'app';
 
     /**
-     * Determine the current asset version.
+     * Tentukan versi asset aplikasi.
      */
     public function version(Request $request): ?string
     {
@@ -23,17 +23,24 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
+     * Data default yang dibagikan ke setiap response Inertia.
      */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
+
             'auth' => [
-                'user' => $request->user(),
+                'user' => fn () => $request->user()
+                    ? [
+                        'id'    => $request->user()->id,
+                        'name'  => $request->user()->name,
+                        'email' => $request->user()->email,
+                        'roles' => $request->user()->roles
+                            ? $request->user()->roles->pluck('name')
+                            : [],
+                    ]
+                    : null,
             ],
-        ];
+        ]);
     }
 }

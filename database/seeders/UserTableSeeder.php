@@ -4,20 +4,30 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Carbon;
 class UserTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('admin123'),
-        ]);
-        $admin->assignRole('admin');
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin', 
+                'password' => bcrypt('password'),
+                'email_verified_at' => Carbon::now(),
+            ]
+        );
+        $admin->assignRole(['admin']);
+
+        $user = User::firstOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'User', 
+                'password' => bcrypt('password'),
+                'email_verified_at' => Carbon::now(),
+            ]
+        );
+        $user->assignRole(['user']);
     }
-}
+}   
