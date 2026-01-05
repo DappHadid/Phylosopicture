@@ -11,7 +11,8 @@ protected $primaryKey = 'payment_id'; // Kunci utama kustom dari migrasi
     protected $fillable = [
         'user_id',
         'movie_id',
-        'midtrans_transaction_id',
+        'order_id',
+        'midtrans_transaction_code',
         'amount',
         'status',
         'payment_date',

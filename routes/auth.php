@@ -12,48 +12,60 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    // =========================
+    // Register
+    // =========================
     Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register'); // Show registration form
+        ->name('register'); // GET route untuk kompatibilitas (walau pakai modal)
+    Route::post('register', [RegisteredUserController::class, 'store']); // Submit register
 
-    Route::post('register', [RegisteredUserController::class, 'store']); // Handle registration
-
+    // =========================
+    // Login
+    // =========================
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login'); // Show login form
+        ->name('login'); // GET route supaya tidak error
+    Route::post('login', [AuthenticatedSessionController::class, 'store']); // Submit login
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']); // Handle login
-
+    // =========================
+    // Forgot / Reset Password
+    // =========================
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request'); // Show forgot password form
-
+        ->name('password.request');
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email'); // Send password reset link
+        ->name('password.email');
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset'); // Show reset password form
-
+        ->name('password.reset');
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store'); // Handle password reset
+        ->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
+    // =========================
+    // Email Verification
+    // =========================
     Route::get('verify-email', EmailVerificationPromptController::class)
-        ->name('verification.notice'); // Show email verification notice
+        ->name('verification.notice');
 
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify'); // Verify email
+        ->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
-        ->name('verification.send'); // Send email verification notification
+        ->name('verification.send');
 
+    // =========================
+    // Password Confirmation & Update
+    // =========================
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-        ->name('password.confirm'); // Show password confirmation form
+        ->name('password.confirm');
+    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
+    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']); // Handle password confirmation
-
-    Route::put('password', [PasswordController::class, 'update'])->name('password.update'); // Update password
-
+    // =========================
+    // Logout
+    // =========================
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout'); // Handle logout
+        ->name('logout');
 });

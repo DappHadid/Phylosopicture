@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('purchased_movies', function (Blueprint $table) {
             $table->id('purchased_id');
-            $table->foreignId('id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('movie_id')->constrained('movies','movie_id')->onDelete('cascade');
-            $table->foreignId('payment_id')->constrained('payments')->onDelete('cascade');
+            $table->foreignId('payment_id')->constrained('payments', 'payment_id')->onDelete('cascade');
             $table->timestamp('purchased_at');
+            $table->decimal('rating', 2, 1)->nullable();
             $table->timestamps();
         });
     }

@@ -17,15 +17,13 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->string('scriptwriter')->nullable();
+            $table->string('producer')->nullable();
             $table->string('director')->nullable();
-            $table->decimal('price', 8, 2);
+            $table->integer('price');
             $table->integer('duration');
-            $table->decimal('rating', 2, 1)->nullable();
             $table->integer('release_year');
             $table->string('storage_url');
             $table->string('thumbnail_url')->nullable();
-            $table->boolean('is_featured');
             $table->timestamps();
         });
     }

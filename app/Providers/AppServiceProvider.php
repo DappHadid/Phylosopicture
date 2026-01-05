@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register any application services here if needed
+        
+        // Example: Bind interfaces to implementations
+        // $this->app->bind(SomeInterface::class, SomeImplementation::class);
     }
 
     /**
@@ -22,14 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-    Inertia::share('auth', function () {
-            return [
-                'user' => Auth::user() ? [
-                    'id' => Auth::user()->id,
-                    'name' => Auth::user()->name,
-                    'email' => Auth::user()->email,
-                    'avatar' => Auth::user()->avatar,
-                ] : null,
-            ];
-    });    }
+        // Authorization Gates
+        Gate::define('admin-access', fn($user) => $user->hasRole('admin'));
+        Gate::define('user-access', fn($user) => $user->hasRole('user') || $user->hasRole('admin'));
+    }
 }

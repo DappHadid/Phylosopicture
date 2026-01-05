@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id('payment_id');
-            $table->foreignId('id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('movie_id')->constrained('movies','movie_id')->onDelete('cascade');
-            $table->string('midtrans_transaction_id')->unique();
-            $table->decimal('amount', 8, 2);
+            $table->string('order_id')->unique(); // ID unik dari sisi kita
+            $table->string('midtrans_transaction_code')->nullable()->unique();
+            $table->integer('amount');
+            $table->string('snap_token')->nullable();
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
             $table->timestamp('payment_date')->nullable();
             $table->timestamps();

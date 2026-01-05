@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Movie;
 use App\Models\Genre;
+use Illuminate\Support\Str;
 
 class MovieSeeder extends Seeder
 {
@@ -13,7 +14,7 @@ class MovieSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create genres first (only if they don't exist)
+        // --- Buat Genres ---
         $genres = [
             ['name' => 'Action', 'slug' => 'action'],
             ['name' => 'Comedy', 'slug' => 'comedy'],
@@ -24,121 +25,36 @@ class MovieSeeder extends Seeder
         ];
 
         foreach ($genres as $genre) {
+            // firstOrCreate akan membuat genre jika belum ada, atau mengambil yang sudah ada.
             Genre::firstOrCreate(['slug' => $genre['slug']], $genre);
         }
-        
-        // Clear existing movies to avoid duplicates
-        Movie::truncate();
 
-        // Create featured movie
-        $featuredMovie = Movie::create([
-            'title' => 'The Quantum Paradox',
-            'slug' => 'the-quantum-paradox',
-            'description' => 'A mind-bending sci-fi thriller that explores the boundaries of reality and consciousness.',
-            'duration' => 148,
-            'release_date' => '2024-03-15',
-            'price' => 9.99,
-            'rating' => 4.8,
-            'is_featured' => true,
-            'trailer_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            'poster_url' => '/images/movies/quantum-paradox.jpg',
-            'backdrop_url' => '/images/movies/quantum-paradox-backdrop.jpg',
-            'status' => 'published',
-        ]);
-
-        $featuredMovie->genres()->attach([1, 5]); // Action, Sci-Fi
-
-        // Create additional movies
-        $movies = [
+        // --- Data Movies ---
+        $moviesData = [
             [
-                'title' => 'Love in Paris',
-                'slug' => 'love-in-paris',
-                'description' => 'A romantic journey through the streets of Paris.',
-                'duration' => 120,
-                'release_date' => '2024-02-14',
-                'price' => 7.99,
-                'rating' => 4.5,
-                'is_featured' => false,
-                'trailer_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'poster_url' => '/images/movies/love-paris.jpg',
-                'backdrop_url' => '/images/movies/love-paris-backdrop.jpg',
-                'status' => 'published',
-            ],
-            [
-                'title' => 'The Last Stand',
-                'slug' => 'the-last-stand',
-                'description' => 'An action-packed thriller about survival and redemption.',
-                'duration' => 135,
-                'release_date' => '2024-01-20',
-                'price' => 8.99,
-                'rating' => 4.3,
-                'is_featured' => false,
-                'trailer_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'poster_url' => '/images/movies/last-stand.jpg',
-                'backdrop_url' => '/images/movies/last-stand-backdrop.jpg',
-                'status' => 'published',
-            ],
-            [
-                'title' => 'Comedy Nights',
-                'slug' => 'comedy-nights',
-                'description' => 'A hilarious comedy about friendship and adventure.',
-                'duration' => 110,
-                'release_date' => '2024-04-01',
-                'price' => 6.99,
-                'rating' => 4.2,
-                'is_featured' => false,
-                'trailer_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'poster_url' => '/images/movies/comedy-nights.jpg',
-                'backdrop_url' => '/images/movies/comedy-nights-backdrop.jpg',
-                'status' => 'published',
-            ],
-            [
-                'title' => 'Dark Shadows',
-                'slug' => 'dark-shadows',
-                'description' => 'A spine-chilling horror experience.',
-                'duration' => 125,
-                'release_date' => '2024-03-30',
-                'price' => 7.99,
-                'rating' => 4.1,
-                'is_featured' => false,
-                'trailer_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'poster_url' => '/images/movies/dark-shadows.jpg',
-                'backdrop_url' => '/images/movies/dark-shadows-backdrop.jpg',
-                'status' => 'published',
-            ],
-            [
-                'title' => 'Space Odyssey',
-                'slug' => 'space-odyssey',
-                'description' => 'An epic space adventure across galaxies.',
-                'duration' => 160,
-                'release_date' => '2024-05-15',
-                'price' => 9.99,
-                'rating' => 4.6,
-                'is_featured' => false,
-                'trailer_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'poster_url' => '/images/movies/space-odyssey.jpg',
-                'backdrop_url' => '/images/movies/space-odyssey-backdrop.jpg',
-                'status' => 'published',
-            ],
-            [
-                'title' => 'Drama Queen',
-                'slug' => 'drama-queen',
-                'description' => 'A powerful drama about love and loss.',
-                'duration' => 140,
-                'release_date' => '2024-02-28',
-                'price' => 8.49,
-                'rating' => 4.4,
-                'is_featured' => false,
-                'trailer_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                'poster_url' => '/images/movies/drama-queen.jpg',
-                'backdrop_url' => '/images/movies/drama-queen-backdrop.jpg',
-                'status' => 'published',
+                'title' => 'Belum Pergi',
+                'description' => 'Okta hanya ingin tempat tinggal yang nyaman untuk memulai hidup barunya. Tapi sejak ia tiba di kos itu, semuanya terasa salah. Sepi, dingin, dan terlalu banyak hal yang tidak bisa dijelaskan. Hari ke hari, kejadian-kejadian janggal terus muncul. Samar-samar, sosok yang tak seharusnya ada mulai menunjukkan dirinya. Okta mencoba mengabaikan, hingga ia menemukan kenyataan kelam yang tersembunyi di balik dinding kos ini tentang seorang perempuan yang kehilangan segalanya, kecuali amarahnya. Ketika suara perempuan dibungkam, ada yang akan berbicara untuknya. Namun pertanyaannya, siapakah yang akan mendengar… sebelum semuanya terlambat?',
+                'genre_slug' => 'horror',
+                'price' => 5000,
+                'release_year' => 2025,
+                'duration' => 19,
+                'thumbnail_url' => 'movies/belum-pergi.png',
+                'storage_url' => '/movies/belum-pergi.mp4',
+                'producer' => 'Silvia Rosikhah',
+                'director' => 'Muhammad Haqul Yaqin',
             ],
         ];
 
-        foreach ($movies as $index => $movie) {
-            $movieModel = Movie::create($movie);
-            $movieModel->genres()->attach([($index % 6) + 1, (($index + 1) % 6) + 1]);
+        // --- Simpan semua movies ---
+        foreach ($moviesData as $movieData) {
+            $genreId = Genre::where('slug', $movieData['genre_slug'])->value('genre_id');
+            
+            $movieToCreate = $movieData;
+            $movieToCreate['slug'] = Str::slug($movieData['title']);
+            $movieToCreate['genre_id'] = $genreId;
+            unset($movieToCreate['genre_slug']);
+
+            Movie::firstOrCreate(['slug' => $movieToCreate['slug']], $movieToCreate);
         }
     }
 }

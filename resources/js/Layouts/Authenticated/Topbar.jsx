@@ -37,7 +37,10 @@ export default function Topbar() {
                         onClick={triggerDropdown}
                     >
                         <img
-                            src={auth.user?.avatar || "/images/avatar.png"}
+                            src={
+                                auth.user.avatar ||
+                                `https://ui-avatars.com/api/?name=${auth.user.name}&background=e0e7ff&color=4338ca`
+                            }
                             className="rounded-full object-cover w-full"
                             alt={auth.user?.name || "User Avatar"}
                         />

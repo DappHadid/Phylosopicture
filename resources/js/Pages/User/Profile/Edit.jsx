@@ -5,7 +5,7 @@ import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationFor
 import Authenticated from "@/Layouts/Authenticated/Index";
 
 export default function Edit({ mustVerifyEmail, status }) {
-    const { auth } = usePage().props; // Ambil data autentikasi dari Inertia props
+    const { auth } = usePage().props;
 
     return (
         <Authenticated
