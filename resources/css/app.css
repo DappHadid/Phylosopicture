@@ -1,3 +1,5 @@
+@import "./sidebar.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,3 +8,12 @@
 .flex::after {
     display: none !important;
 } */
+
+.carousel {
+    width: 100%;
+    overflow: hidden;
+}
+
+.flickity-slider>div {
+    margin-right: 30px;
+}

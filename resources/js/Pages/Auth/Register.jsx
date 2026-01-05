@@ -2,6 +2,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
+import ValidationErrors from "@/Components/ValidationErrors";
 
 export default function RegisterPage() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -58,6 +59,7 @@ export default function RegisterPage() {
                                 Explore our new movies and get <br />
                                 the better insight for your life
                             </p>
+                            <ValidationErrors errors={errors} />
                         </div>
 
                         <form className="w-full" onSubmit={submit}>

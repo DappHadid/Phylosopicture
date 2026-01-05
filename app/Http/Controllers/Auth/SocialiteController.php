@@ -43,15 +43,12 @@ class SocialiteController extends Controller
             $existingUser = User::where('email', $socialUser->getEmail())->first();
 
             if ($existingUser) {
-                // Jika user sudah ada, update provider info (jika belum ada)
-                if (is_null($existingUser->provider)) {
-                    $existingUser->update([
-                        'provider' => $provider,
-                        'provider_id' => $socialUser->getId(),
-                        'avatar' => $socialUser->getAvatar(),
-                        'email_verified_at' => now(),
-                    ]);
-                }
+                $existingUser->update([
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->getId(),
+                    'avatar' => $socialUser->getAvatar(),
+                    'email_verified_at' => now(),
+                ]);
                 
                 Auth::login($existingUser);
                 return redirect()->intended('/dashboard');
