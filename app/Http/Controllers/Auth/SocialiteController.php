@@ -13,11 +13,14 @@ use Illuminate\Support\Str;
 class SocialiteController extends Controller
 {
     /**
-     * Redirect user to Google OAuth page
+     * Mengarahkan pengguna ke halaman otentikasi provider (Google).
+     *
+     * @param string $provider
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function redirect($provider)
     {
-        // Validasi provider yang didukung
+        // Validasi untuk memastikan hanya provider yang didukung yang digunakan
         if (!in_array($provider, ['google'])) {
             return redirect()->route('login')->with('error', 'Provider not supported');
         }
@@ -26,49 +29,55 @@ class SocialiteController extends Controller
     }
 
     /**
-     * Handle callback from Google OAuth
+     * Menangani callback setelah otentikasi dari provider (Google).
+     *
+     * @param string $provider
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function callback($provider)
     {
         try {
-            // Validasi provider
+            // Validasi provider sekali lagi
             if (!in_array($provider, ['google'])) {
                 return redirect()->route('login')->with('error', 'Provider not supported');
             }
 
-            // Ambil user data dari provider
+            // Ambil data pengguna dari Google
             $socialUser = Socialite::driver($provider)->user();
             
-            // Cek apakah user sudah ada berdasarkan email
-            $existingUser = User::where('email', $socialUser->getEmail())->first();
-
-            if ($existingUser) {
-                $existingUser->update([
+            // Cari pengguna di database berdasarkan email. Jika tidak ada, buat pengguna baru.
+            // Jika sudah ada, perbarui datanya.
+            $user = User::updateOrCreate(
+                [
+                    'email' => $socialUser->getEmail(),
+                ],
+                [
+                    'name' => $socialUser->getName(),
                     'provider' => $provider,
                     'provider_id' => $socialUser->getId(),
-                    'avatar' => $socialUser->getAvatar(),
                     'email_verified_at' => now(),
-                ]);
-                
-                Auth::login($existingUser);
-                return redirect()->intended('/dashboard');
+                    'password' => Hash::make(Str::random(24)), 
+                ]
+            );
+            
+            // BAGIAN PALING PENTING: Berikan role 'user' jika pengguna belum memilikinya.
+            // Ini tidak akan menimpa role 'admin' jika pengguna tersebut sudah menjadi admin.
+            if (!$user->hasRole('user') && !$user->hasRole('admin')) {
+                $user->assignRole('user');
+            }
+            
+            // Login-kan pengguna ke dalam aplikasi
+            Auth::login($user);
+            
+            // Arahkan pengguna ke dashboard yang sesuai
+            if ($user->hasRole('admin')) {
+                return redirect()->route('admin.dashboard');
             }
 
-            // Buat user baru
-            $newUser = User::create([
-                'name' => $socialUser->getName(),
-                'email' => $socialUser->getEmail(),
-                'provider' => $provider,
-                'provider_id' => $socialUser->getId(),
-                'avatar' => $socialUser->getAvatar(),
-                'email_verified_at' => now(),
-                'password' => Hash::make(Str::random(24)), // Random password
-            ]);
-
-            Auth::login($newUser);
-            return redirect()->intended('/dashboard');
+            return redirect()->route('user.dashboard');
 
         } catch (\Exception $e) {
+            // Jika terjadi error, kembalikan ke halaman login dengan pesan error
             return redirect()->route('login')->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }

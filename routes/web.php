@@ -2,57 +2,90 @@
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\NewsController;
+use App\Http\Controllers\Admin\GenreController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\PaymentController;
+use App\Http\Controllers\User\RatingController;
+use App\Http\Controllers\User\MovieController as UserMovieController;
+use App\Http\Controllers\Admin\MovieController as AdminMovieController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group.
-|
 */
 
-Route::get('/', function () {
-    return redirect()->route('login');
-})->name('root'); // Redirect to login
+// ========================
+// Public & Core Routes
+// ========================
 
-// Authentication Routes (Socialite)
+// Homepage (Satu-satunya rute untuk '/')
+Route::get('/', [DashboardController::class, 'index'])->name('home');
+
+// News
+Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
+
+// Movies (list & detail)
+Route::get('/movies', [UserMovieController::class, 'index'])->name('movies.index');
+Route::get('/movies/{slug}', [UserMovieController::class, 'show'])->name('movies.show');
+// Socialite (login via Google, dll.)
 Route::prefix('auth')->name('socialite.')->group(function () {
-    Route::get('/{provider}/redirect', [SocialiteController::class, 'redirect'])
-        ->name('redirect'); // Redirect to provider
-    Route::get('/{provider}/callback', [SocialiteController::class, 'callback'])
-        ->name('callback'); // Handle provider callback
+    Route::get('/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('redirect');
+    Route::get('/{provider}/callback', [SocialiteController::class, 'callback'])->name('callback');
 });
 
-Route::middleware(['auth', 'verified', 'role:user'])->prefix('dashboard')->name('user.')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard'); // User dashboard
-    Route::get('/favorites', [DashboardController::class, 'favorites'])->name('favorite'); // User favorites
+
+// ========================
+// User Routes (Login Required)
+// ========================
+Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
+    // Movie Play (hanya user login bisa nonton/play)
+    Route::get('/movie/{slug}/play', [UserMovieController::class, 'play'])->name('movie.play');
+
+    // Payment Routes (hanya login bisa beli movie)
+    Route::post('/movie/{slug}/buy', [PaymentController::class, 'buy'])->name('movie.buy');
+    Route::post('/payment/webhook', [PaymentController::class, 'webhookHandler'])->name('payment.webhook');
+    
+    // Rating Routes
+    Route::post('/movie/{movie:slug}/rate', [RatingController::class, 'store'])->name('movie.rate');
+
+    // Profile
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('User/Profile/Edit');
+        })->name('edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
 });
 
+
+// ========================
+// Admin Routes
+// ========================
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Admin/Dashboard'); // Admin dashboard
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/movies', [AdminMovieController::class, 'index'])->name('movies.index');
+    Route::get('/movies/create', [AdminMovieController::class, 'create'])->name('movies.create');
+    Route::post('/movies', [AdminMovieController::class, 'store'])->name('movies.store');
+    Route::get('/movies/{movie}/edit', [AdminMovieController::class, 'edit'])->name('movies.edit');
+    Route::put('/movies/{movie}', [AdminMovieController::class, 'update'])->name('movies.update');
+    Route::delete('/movies/{movie}', [AdminMovieController::class, 'destroy'])->name('movies.destroy');
+    Route::get('/movies/{movie}', [AdminMovieController::class, 'show'])->name('movies.show');
+    Route::resource('news', AdminNewsController::class);
+    Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+    Route::resource('genres', GenreController::class)->except(['show']);
 });
 
-Route::name('movie.')->group(function () {
-    Route::get('/movie/{slug}', [MovieController::class, 'show'])->name('show'); // Show movie details
-    Route::get('/buy/{slug}', [MovieController::class, 'buy'])->name('buy'); // Buy movie
-});
 
-Route::middleware('auth')->name('profile.')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('User/Profile/Edit'); // Edit profile
-    })->name('edit');
-    Route::patch('/', [ProfileController::class, 'update'])->name('update'); // Update profile
-    Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy'); // Delete profile
-});
-
-// Include Authentication Routes
+// ========================
+// Auth Routes (login, register, dll.)
+// ========================
 require __DIR__ . '/auth.php';

@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchasedMovie extends Model
 {
-protected $primaryKey = 'purchased_id'; // Kunci utama kustom dari migrasi
+protected $primaryKey = 'purchased_id';
     protected $fillable = [
         'user_id',
         'movie_id',
         'payment_id',
         'purchased_at',
+        'rating',
     ];
+    protected $casts = [
+    'rating' => 'float',
+];
 
     public function user(): BelongsTo
     {
