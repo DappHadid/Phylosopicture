@@ -8,6 +8,9 @@ export default function FeaturedMovie({
     thumbnail,
     rating = 0,
 }) {
+    // Ensure rating is a number
+    const numericRating =
+        typeof rating === "string" ? parseFloat(rating) : rating;
     return (
         <div className="w-[520px] h-[340px] relative overflow-hidden group mr-[30px]">
             {/* Movie Thumbnail */}
@@ -21,7 +24,7 @@ export default function FeaturedMovie({
                 <div className="p-[30px] flex items-center gap-1">
                     <img src="/icons/ic_star.svg" alt="Star" />
                     <span className="text-sm font-medium text-white mt-1">
-                        {rating.toFixed(1)}/5.0
+                        {numericRating.toFixed(1)}/5.0
                     </span>
                 </div>
             </div>
@@ -39,7 +42,7 @@ export default function FeaturedMovie({
                     <img src="/icons/ic_play.svg" width="50" alt="Play" />
                 </div>
             </div>
-            <Link href={slug} className="inset-0 absolute z-50" />
+            <Link href={`/movie/${slug}`} className="inset-0 absolute z-10" />
         </div>
     );
 }

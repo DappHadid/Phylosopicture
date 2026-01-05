@@ -11,6 +11,7 @@ class Movie extends Model
 protected $primaryKey = 'movie_id'; // Kunci utama kustom dari migrasi
     protected $fillable = [
         'genre_id',
+        'slug',
         'title',
         'description',
         'scriptwriter',
@@ -24,6 +25,11 @@ protected $primaryKey = 'movie_id'; // Kunci utama kustom dari migrasi
         'is_featured',
     ];
 
+    protected $casts = [
+        'price' => 'float', // Cast price sebagai float
+        'rating' => 'float', // Cast rating sebagai float (opsional, untuk konsistensi)
+        'is_featured' => 'boolean',
+    ];
     public function genre(): BelongsTo
     {
         return $this->belongsTo(Genre::class, 'genre_id', 'genre_id');

@@ -3,34 +3,40 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use App\Models\Movie;
+use Illuminate\Support\Facades\Auth;
 
 class MovieController extends Controller
 {
+    /**
+     * Display the specified movie details.
+     *
+     * @param string $slug
+     * @return \Inertia\Response
+     */
     public function show($slug)
     {
-        // Data statis untuk pengujian (ganti dengan query database nanti)
-        $movie = [
-            'slug' => $slug,
-            'name' => 'Sunset Di Pantai Losari',
-            'category' => 'Drama',
-            'thumbnail' => '/images/featured-1.png',
-            'duration' => '1h 30m',
-            'price' => '20.000',
-            'description' => 'Mario dan Tenri sepakat untuk pulang berkemah bersama keluarga masing-masing...',
-            'cast' => 'Siti Arita, Jihan Kler',
-            'releaseYear' => '2018',
-            'writer' => 'Aca Hasauddin Mt',
-            'director' => 'Aca Hasauddin Mt',
-            'production' => 'SKY Movie Entertainment',
-        ];
+        $movie = Movie::where('slug', $slug)->with('genre')->firstOrFail();
 
-        return Inertia::render('MovieDetail', ['movie' => $movie]);
+        return Inertia::render('User/MovieDetailPage', [
+            'movie' => $movie,
+            'auth' => Auth::user() ? ['user' => Auth::user()] : null,
+        ]);
     }
 
-    // Tambahkan method untuk rute /buy (opsional untuk sekarang)
+    /**
+     * Handle the movie purchase process.
+     *
+     * @param string $slug
+     * @return \Inertia\Response
+     */
     public function buy($slug)
     {
-        // Logika pembelian akan ditambahkan di sini nanti
-        return Inertia::render('Buy', ['slug' => $slug]);
+        $movie = Movie::where('slug', $slug)->with('genre')->firstOrFail();
+
+        return Inertia::render('User/Watching', [
+            'movie' => $movie,
+            'auth' => Auth::user() ? ['user' => Auth::user()] : null,
+        ]);
     }
 }
